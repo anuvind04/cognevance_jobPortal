@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import API from "../api";
 
 function Jobs() {
@@ -8,18 +8,18 @@ function Jobs() {
   const [jobType, setJobType] = useState("");
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
-  const fetchJobs = async () => {
+  const fetchJobs = useCallback(async () => {
     const params = {};
     if (search) params.search = search;
     if (location) params.location = location;
     if (jobType) params.job_type = jobType;
     const res = await API.get("/jobs/", { params });
     setJobs(res.data);
-  };
+  }, [search, location, jobType]);
 
   useEffect(() => {
     fetchJobs();
-  }, []);
+  }, [fetchJobs]);
 
   const applyToJob = async (jobId) => {
     try {
